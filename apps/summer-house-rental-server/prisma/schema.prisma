@@ -1,0 +1,53 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Renter {
+  createdAt   DateTime @default(now())
+  email       String?
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?
+  phoneNumber String?
+  rentals     Rental[]
+  updatedAt   DateTime @updatedAt
+}
+
+model House {
+  address       String?
+  createdAt     DateTime @default(now())
+  description   String?
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  owner         Owner?   @relation(fields: [ownerId], references: [id])
+  ownerId       String?  @db.ObjectId
+  pricePerNight Float?
+  rentals       Rental[]
+  updatedAt     DateTime @updatedAt
+}
+
+model Rental {
+  createdAt  DateTime  @default(now())
+  endDate    DateTime?
+  house      House?    @relation(fields: [houseId], references: [id])
+  houseId    String?   @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  renter     Renter?   @relation(fields: [renterId], references: [id])
+  renterId   String?   @db.ObjectId
+  startDate  DateTime?
+  totalPrice Float?
+  updatedAt  DateTime  @updatedAt
+}
+
+model Owner {
+  createdAt   DateTime @default(now())
+  email       String?
+  houses      House[]
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?
+  phoneNumber String?
+  updatedAt   DateTime @updatedAt
+}
